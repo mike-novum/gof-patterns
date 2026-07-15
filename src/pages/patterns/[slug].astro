@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { PATTERNS, PATTERNS_BY_SLUG, getRelatedPatterns } from '../../data/patterns';
+import { CATEGORY_META } from '../../types/pattern';
+import { PatternSlides } from '../../components/PatternSlides';
+
+export function getStaticPaths() {
+  return PATTERNS.map(pattern => ({
+    params: { slug: pattern.slug },
+    props: { pattern },
+  }));
+}
+
+const { pattern } = Astro.props;
+const meta = CATEGORY_META[pattern.category];
+const related = getRelatedPatterns(pattern);
+
+// Find current index for nav ordering
+const allInCategory = PATTERNS.filter(p => p.category === pattern.category);
+const inCategoryIndex = allInCategory.findIndex(p => p.slug === pattern.slug);
+const prevPattern = inCategoryIndex > 0 ? allInCategory[inCategoryIndex - 1] : null;
+const nextPattern = inCategoryIndex < allInCategory.length - 1 ? allInCategory[inCategoryIndex + 1] : null;
+---
+
+<BaseLayout title={`${pattern.name} — Паттерны проектирования`} description={pattern.intent}>
+  <!-- BREADCRUMB / META BAR -->
+  <div class="border-b" style="border-color: var(--border-subtle)">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <a
+        href="/"
+        class="group inline-flex items-center gap-2 text-sm transition-colors hover:text-[var(--accent)]"
+        style="color: var(--text-secondary)"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition-transform group-hover:-translate-x-1">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Все паттерны
+      </a>
+      <div class="flex items-center gap-3">
+        <span
+          class="mono text-[10px] uppercase tracking-[0.2em] px-2 py-1 rounded-full"
+          style="color: var(--accent); background: var(--accent-soft); border: 1px solid var(--border-subtle)"
+        >
+          {meta.index} · {meta.title}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO HEADER -->
+  <section class="relative grid-bg overflow-hidden">
+    <div class="absolute inset-x-0 top-0 h-px" style="background: linear-gradient(90deg, transparent, var(--accent), transparent)"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6 sm:pt-16">
+      <div class="flex flex-col gap-6">
+        <div class="flex items-baseline gap-4">
+          <span class="display-font text-6xl font-bold leading-none sm:text-7xl" style="color: var(--accent)">
+            {pattern.name}
+          </span>
+        </div>
+        <p class="max-w-3xl text-lg leading-relaxed sm:text-xl" style="color: var(--text-secondary)">
+          {pattern.intent}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <!-- Slides (main) -->
+      <div class="lg:col-span-8">
+        <PatternSlides client:load pattern={pattern} />
+      </div>
+
+      <!-- Sidebar (related + adjacent) -->
+      <aside class="lg:col-span-4">
+        <div class="sticky top-24 space-y-8">
+          <!-- Adjacent navigation -->
+          <div>
+            <div class="mb-3 flex items-center gap-2">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                В этой категории
+              </span>
+              <div class="h-px flex-1" style="background: var(--border-default)"></div>
+            </div>
+            <div class="space-y-2">
+              {prevPattern && (
+                <a
+                  href={`/patterns/${prevPattern.slug}/`}
+                  class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
+                  style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
+                >
+                  <span class="flex items-center gap-2">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                    {prevPattern.name}
+                  </span>
+                </a>
+              )}
+              {nextPattern && (
+                <a
+                  href={`/patterns/${nextPattern.slug}/`}
+                  class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
+                  style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
+                >
+                  <span class="flex items-center gap-2">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                    {nextPattern.name}
+                  </span>
+                </a>
+              )}
+            </div>
+          </div>
+
+          <!-- Related patterns -->
+          {related.length > 0 && (
+            <div>
+              <div class="mb-3 flex items-center gap-2">
+                <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                  Связанные
+                </span>
+                <div class="h-px flex-1" style="background: var(--border-default)"></div>
+              </div>
+              <div class="space-y-2">
+                {related.map(rp => (
+                  <a
+                    href={`/patterns/${rp.slug}/`}
+                    class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
+                    style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
+                  >
+                    <span>{rp.name}</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-0 transition-opacity group-hover:opacity-100" style="color: var(--accent)">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Hint card -->
+          <div
+            class="rounded-xl border p-4"
+            style="background: var(--bg-card); border-color: var(--border-subtle)"
+          >
+            <div class="mb-3 flex items-center gap-2">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--text-tertiary)">
+                Подсказки
+              </span>
+            </div>
+            <div class="space-y-2 text-xs" style="color: var(--text-secondary)">
+              <div class="flex items-center justify-between">
+                <span>Вперёд</span>
+                <div class="flex gap-1">
+                  <kbd class="rounded border px-1.5 py-0.5 mono" style="border-color: var(--border-default)">→</kbd>
+                  <kbd class="rounded border px-1.5 py-0.5 mono" style="border-color: var(--border-default)">Space</kbd>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Назад</span>
+                <kbd class="rounded border px-1.5 py-0.5 mono" style="border-color: var(--border-default)">←</kbd>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>В начало / конец</span>
+                <div class="flex gap-1">
+                  <kbd class="rounded border px-1.5 py-0.5 mono" style="border-color: var(--border-default)">Home</kbd>
+                  <kbd class="rounded border px-1.5 py-0.5 mono" style="border-color: var(--border-default)">End</kbd>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

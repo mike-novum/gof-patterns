@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CategorySection } from '../components/CategorySection';
+import { PATTERNS, getRelatedPatterns } from '../data/patterns';
+import { CATEGORY_ORDER, type Category } from '../types/pattern';
+
+const byCategory: Record<Category, typeof PATTERNS> = {
+  creational: PATTERNS.filter(p => p.category === 'creational'),
+  structural: PATTERNS.filter(p => p.category === 'structural'),
+  behavioral: PATTERNS.filter(p => p.category === 'behavioral'),
+};
+
+const totalCount = PATTERNS.length;
+const startIndex: Record<Category, number> = {
+  creational: 0,
+  structural: byCategory.creational.length,
+  behavioral: byCategory.creational.length + byCategory.structural.length,
+};
+
+// Quick stats for hero
+const stats = [
+  { label: 'Creational', value: byCategory.creational.length, color: 'var(--accent)' },
+  { label: 'Structural', value: byCategory.structural.length, color: 'var(--accent-hover)' },
+  { label: 'Behavioral', value: byCategory.behavioral.length, color: 'var(--accent)' },
+];
+---
+
+<BaseLayout title="Паттерны проектирования — GoF 23" description="Полная коллекция из 23 паттернов GoF с примерами кода, аналогиями и пошаговыми разборами. Тёмная тема, оранжевая палитра, адаптивный дизайн.">
+  <!-- HERO -->
+  <section class="relative grid-bg overflow-hidden">
+    <!-- Decorative glow -->
+    <div
+      class="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2"
+      aria-hidden
+    >
+      <div
+        class="h-[600px] w-[800px] rounded-full opacity-30 blur-[120px]"
+        style="background: radial-gradient(circle, var(--accent) 0%, transparent 70%);"
+      />
+    </div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24 lg:pt-32">
+      <!-- Top label -->
+      <div class="stagger mb-8 flex items-center gap-3">
+        <span class="mono text-[10px] uppercase tracking-[0.3em]" style="color: var(--accent)">
+          GoF · Полная коллекция
+        </span>
+        <div class="h-px w-12" style="background: var(--accent)"></div>
+        <span class="mono text-[10px] uppercase tracking-[0.3em]" style="color: var(--text-tertiary)">
+          v 1.0
+        </span>
+      </div>
+
+      <!-- Main title — asymmetric grid break -->
+      <div class="stagger flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+        <h1 class="display-font text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl lg:text-[5rem] xl:text-[6.5rem]">
+          Паттерны<br />
+          <span style="color: var(--accent)">проектирования</span>
+        </h1>
+        <div class="flex max-w-md flex-col lg:items-end">
+          <p class="text-lg leading-relaxed lg:text-right" style="color: var(--text-secondary)">
+            23 классических паттерна из книги «Банды четырёх» — с&nbsp;аналогиями, примерами и&nbsp;адаптивной глубиной разбора.
+          </p>
+          <div class="mt-6 flex items-center gap-4">
+            <a
+              href="#creational"
+              class="group inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-all hover:gap-3"
+              style="background: var(--accent); color: white;"
+            >
+              Начать
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition-transform group-hover:translate-x-1">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+            <a
+              href="#behavioral"
+              class="mono text-[11px] uppercase tracking-[0.2em] transition-colors hover:text-[var(--accent)]"
+              style="color: var(--text-secondary)"
+            >
+              Все паттерны ↓
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stagger mt-16 grid grid-cols-3 gap-3 border-y sm:gap-0" style="border-color: var(--border-subtle)">
+        {stats.map((s, i) => (
+          <div
+            class={`flex flex-col gap-1 py-6 sm:py-8 ${i !== 0 ? 'sm:border-l sm:pl-8' : ''} ${i !== stats.length - 1 ? 'sm:pr-8' : ''}`}
+            style={i !== 0 ? 'border-color: var(--border-subtle)' : ''}
+          >
+            <div class="mono flex items-baseline gap-2 text-[10px] uppercase tracking-[0.2em]" style="color: var(--text-tertiary)">
+              <span style={`color: ${s.color}`}>●</span> {s.label}
+            </div>
+            <div class="display-font text-4xl font-bold sm:text-5xl" style={`color: ${s.color}`}>
+              {String(s.value).padStart(2, '0')}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="stagger space-y-20 sm:space-y-28">
+      {CATEGORY_ORDER.map(category => (
+        <CategorySection
+          category={category}
+          patterns={byCategory[category]}
+          totalCount={totalCount}
+          startIndex={startIndex[category]}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- ABOUT / INTRO SECTION -->
+  <section class="border-t" style="border-color: var(--border-subtle)">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-4">
+          <span class="mono text-[10px] uppercase tracking-[0.3em]" style="color: var(--accent)">
+            Что внутри
+          </span>
+          <h2 class="display-font mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+            Каждый паттерн —<br/>с&nbsp;разбором
+          </h2>
+        </div>
+        <div class="lg:col-span-8">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="rounded-xl border p-5" style="background: var(--bg-card); border-color: var(--border-subtle)">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                01
+              </span>
+              <h3 class="display-font mt-2 text-lg font-semibold">Аналогия из жизни</h3>
+              <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-secondary)">
+                Сначала — метафора, которая делает паттерн интуитивным.
+              </p>
+            </div>
+            <div class="rounded-xl border p-5" style="background: var(--bg-card); border-color: var(--border-subtle)">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                02
+              </span>
+              <h3 class="display-font mt-2 text-lg font-semibold">Проблема → Решение</h3>
+              <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-secondary)">
+                Что не так с «наивным» кодом и как паттерн это исправляет.
+              </p>
+            </div>
+            <div class="rounded-xl border p-5" style="background: var(--bg-card); border-color: var(--border-subtle)">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                03
+              </span>
+              <h3 class="display-font mt-2 text-lg font-semibold">Код на TypeScript</h3>
+              <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-secondary)">
+                Реальный, запускаемый пример с комментариями.
+              </p>
+            </div>
+            <div class="rounded-xl border p-5" style="background: var(--bg-card); border-color: var(--border-subtle)">
+              <span class="mono text-[10px] uppercase tracking-[0.2em]" style="color: var(--accent)">
+                04
+              </span>
+              <h3 class="display-font mt-2 text-lg font-semibold">Плюсы, минусы, применение</h3>
+              <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-secondary)">
+                Когда стоит использовать, а когда — нет.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

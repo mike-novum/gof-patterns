@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import { ThemeToggle, themeInitScript } from '../components/ThemeToggle';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showHeader?: boolean;
+}
+
+const { title = 'Паттерны проектирования', description = '23 классических паттерна GoF — интерактивная презентация для разработчиков', showHeader = true } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f97316'/%3E%3Cpath d='M10 16 L14 20 L22 12' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E`} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Geist:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+
+    <title>{title}</title>
+
+    {/* Apply theme BEFORE render to prevent flash */}
+    <script is:inline set:html={themeInitScript}></script>
+  </head>
+
+  <body class="min-h-screen bg-base text-primary">
+    {showHeader && (
+      <header class="sticky top-0 z-50 border-b backdrop-blur-md" style="background: color-mix(in srgb, var(--bg-base) 80%, transparent); border-color: var(--border-subtle)">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <a href="/" class="group flex items-center gap-3">
+            <div
+              class="relative flex h-9 w-9 items-center justify-center rounded-lg transition-transform group-hover:scale-105"
+              style="background: var(--accent);"
+            >
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                <path d="M10 16 L14 20 L22 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div
+                class="absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+                style="box-shadow: 0 0 24px var(--accent);"
+              />
+            </div>
+            <div class="flex flex-col">
+              <span class="display-font text-base font-semibold tracking-tight" style="color: var(--text-primary)">
+                Patterns
+              </span>
+              <span class="mono text-[9px] uppercase tracking-[0.2em]" style="color: var(--text-tertiary)">
+                GoF · 23
+              </span>
+            </div>
+          </a>
+
+          <nav class="flex items-center gap-3">
+            <a
+              href="/"
+              class="mono hidden text-[11px] uppercase tracking-[0.2em] transition-colors hover:text-[var(--accent)] sm:inline"
+              style="color: var(--text-secondary)"
+            >
+              Каталог
+            </a>
+            <ThemeToggle client:load />
+          </nav>
+        </div>
+      </header>
+    )}
+
+    <main class="relative">
+      <slot />
+    </main>
+
+    <footer class="mt-32 border-t" style="border-color: var(--border-subtle)">
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 sm:flex-row sm:px-6">
+        <div class="mono text-[11px] uppercase tracking-[0.2em]" style="color: var(--text-tertiary)">
+          23 паттерна · русский · {new Date().getFullYear()}
+        </div>
+        <div class="mono text-[11px]" style="color: var(--text-tertiary)">
+          ← → навигация · Space следующий
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
