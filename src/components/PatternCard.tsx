@@ -1,4 +1,5 @@
 import { CATEGORY_META, type Pattern } from '../types/pattern';
+import { url } from '../lib/paths';
 
 interface Props {
   pattern: Pattern;
@@ -13,7 +14,7 @@ export function PatternCard({ pattern, index, total }: Props) {
 
   return (
     <a
-      href={`/patterns/${pattern.slug}/`}
+      href={url(`/patterns/${pattern.slug}/`)}
       className="group relative flex flex-col gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1"
       style={{
         backgroundColor: 'var(--bg-card)',

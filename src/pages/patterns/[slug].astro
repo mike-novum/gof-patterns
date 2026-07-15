@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { PATTERNS, PATTERNS_BY_SLUG, getRelatedPatterns } from '../../data/patterns';
 import { CATEGORY_META } from '../../types/pattern';
 import { PatternSlides } from '../../components/PatternSlides';
+import { url } from '../../lib/paths';
 
 export function getStaticPaths() {
   return PATTERNS.map(pattern => ({
@@ -27,7 +28,7 @@ const nextPattern = inCategoryIndex < allInCategory.length - 1 ? allInCategory[i
   <div class="border-b" style="border-color: var(--border-subtle)">
     <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <a
-        href="/"
+        href={url('/')}
         class="group inline-flex items-center gap-2 text-sm transition-colors hover:text-[var(--accent)]"
         style="color: var(--text-secondary)"
       >
@@ -88,7 +89,7 @@ const nextPattern = inCategoryIndex < allInCategory.length - 1 ? allInCategory[i
             <div class="space-y-2">
               {prevPattern && (
                 <a
-                  href={`/patterns/${prevPattern.slug}/`}
+                  href={url(`/patterns/${prevPattern.slug}/`)}
                   class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
                   style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
                 >
@@ -102,7 +103,7 @@ const nextPattern = inCategoryIndex < allInCategory.length - 1 ? allInCategory[i
               )}
               {nextPattern && (
                 <a
-                  href={`/patterns/${nextPattern.slug}/`}
+                  href={url(`/patterns/${nextPattern.slug}/`)}
                   class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
                   style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
                 >
@@ -129,7 +130,7 @@ const nextPattern = inCategoryIndex < allInCategory.length - 1 ? allInCategory[i
               <div class="space-y-2">
                 {related.map(rp => (
                   <a
-                    href={`/patterns/${rp.slug}/`}
+                    href={url(`/patterns/${rp.slug}/`)}
                     class="group flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-all hover:border-[var(--accent)]"
                     style="background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-secondary)"
                   >
