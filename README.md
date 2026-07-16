@@ -190,3 +190,12 @@ MIT © 2026 — используйте, форкайте, учитесь.
 
 - [Design Patterns: Elements of Reusable Object-Oriented Software](https://en.wikipedia.org/wiki/Design_Patterns) — книга «Банды четырёх» (Gang of Four)
 - [Refactoring Guru — Design Patterns](https://refactoring.guru/design-patterns) — отличные визуализации и примеры
+
+
+## Инструменты
+
+Данный проект собран полностью с помощью следующих инстурментов:
+
+- Claude Code CLI
+- MiniMax-M3
+- Cursor
